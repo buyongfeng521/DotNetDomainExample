@@ -38,6 +38,16 @@ namespace Step.Application
 			return service.IQueryable(expression).OrderByDescending(order).ToList();
 		}
 
+		public List<t_admin_userEntity> GetPageList<TKey>(int pageIndex,int pageSize,Expression<Func<t_admin_userEntity,bool>> expression,Expression<Func<t_admin_userEntity,TKey>> order)
+		{
+			return service.IQueryablePage(pageIndex,pageSize,expression,order).ToList();
+		}
+
+		public List<t_admin_userEntity> GetPageListDesc<TKey>(int pageIndex,int pageSize,Expression<Func<t_admin_userEntity,bool>> expression,Expression<Func<t_admin_userEntity,TKey>> order)
+		{
+			return service.IQueryablePageDesc(pageIndex,pageSize,expression,order).ToList();
+		}
+
 	    public t_admin_userEntity GetEntity(string keyValue)
         {
             return service.FindEntity(keyValue);
@@ -95,6 +105,16 @@ namespace Step.Application
 		public List<t_menuEntity> GetListByDesc<TKey>(Expression<Func<t_menuEntity, bool>> expression,Expression<Func<t_menuEntity, TKey>> order)
 		{
 			return service.IQueryable(expression).OrderByDescending(order).ToList();
+		}
+
+		public List<t_menuEntity> GetPageList<TKey>(int pageIndex,int pageSize,Expression<Func<t_menuEntity,bool>> expression,Expression<Func<t_menuEntity,TKey>> order)
+		{
+			return service.IQueryablePage(pageIndex,pageSize,expression,order).ToList();
+		}
+
+		public List<t_menuEntity> GetPageListDesc<TKey>(int pageIndex,int pageSize,Expression<Func<t_menuEntity,bool>> expression,Expression<Func<t_menuEntity,TKey>> order)
+		{
+			return service.IQueryablePageDesc(pageIndex,pageSize,expression,order).ToList();
 		}
 
 	    public t_menuEntity GetEntity(string keyValue)
@@ -156,6 +176,16 @@ namespace Step.Application
 			return service.IQueryable(expression).OrderByDescending(order).ToList();
 		}
 
+		public List<t_roleEntity> GetPageList<TKey>(int pageIndex,int pageSize,Expression<Func<t_roleEntity,bool>> expression,Expression<Func<t_roleEntity,TKey>> order)
+		{
+			return service.IQueryablePage(pageIndex,pageSize,expression,order).ToList();
+		}
+
+		public List<t_roleEntity> GetPageListDesc<TKey>(int pageIndex,int pageSize,Expression<Func<t_roleEntity,bool>> expression,Expression<Func<t_roleEntity,TKey>> order)
+		{
+			return service.IQueryablePageDesc(pageIndex,pageSize,expression,order).ToList();
+		}
+
 	    public t_roleEntity GetEntity(string keyValue)
         {
             return service.FindEntity(keyValue);
@@ -213,6 +243,16 @@ namespace Step.Application
 		public List<t_role_menuEntity> GetListByDesc<TKey>(Expression<Func<t_role_menuEntity, bool>> expression,Expression<Func<t_role_menuEntity, TKey>> order)
 		{
 			return service.IQueryable(expression).OrderByDescending(order).ToList();
+		}
+
+		public List<t_role_menuEntity> GetPageList<TKey>(int pageIndex,int pageSize,Expression<Func<t_role_menuEntity,bool>> expression,Expression<Func<t_role_menuEntity,TKey>> order)
+		{
+			return service.IQueryablePage(pageIndex,pageSize,expression,order).ToList();
+		}
+
+		public List<t_role_menuEntity> GetPageListDesc<TKey>(int pageIndex,int pageSize,Expression<Func<t_role_menuEntity,bool>> expression,Expression<Func<t_role_menuEntity,TKey>> order)
+		{
+			return service.IQueryablePageDesc(pageIndex,pageSize,expression,order).ToList();
 		}
 
 	    public t_role_menuEntity GetEntity(string keyValue)

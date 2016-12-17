@@ -71,6 +71,14 @@ namespace Step.Data
         {
             return dbcontext.Set<TEntity>().Where(predicate);
         }
+        public IQueryable<TEntity> IQueryablePage<TKey>(int pageIndex, int pageSize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> order)
+        {
+            return dbcontext.Set<TEntity>().Where(predicate).OrderBy(order).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+        }
+        public IQueryable<TEntity> IQueryablePageDesc<TKey>(int pageIndex, int pageSize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> order)
+        {
+            return dbcontext.Set<TEntity>().Where(predicate).OrderByDescending(order).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+        }
         public List<TEntity> FindList(string strSql)
         {
             return dbcontext.Database.SqlQuery<TEntity>(strSql).ToList<TEntity>();

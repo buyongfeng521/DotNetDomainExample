@@ -20,6 +20,8 @@ namespace Step.Data
         TEntity FindEntity(Expression<Func<TEntity, bool>> predicate);
         IQueryable<TEntity> IQueryable();
         IQueryable<TEntity> IQueryable(Expression<Func<TEntity, bool>> predicate);
+        IQueryable<TEntity> IQueryablePage<TKey>(int pageIndex, int pageSize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> order);
+        IQueryable<TEntity> IQueryablePageDesc<TKey>(int pageIndex, int pageSize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> order);
         List<TEntity> FindList(string strSql);
         List<TEntity> FindList(string strSql, DbParameter[] dbParameter);
         List<TEntity> FindList(Pagination pagination);

@@ -52,6 +52,16 @@ namespace Step.Application
 			return service.IQueryable(expression).OrderByDescending(order).ToList();
 		}
 
+		public List<<#=table.TableName#>Entity> GetPageList<TKey>(int pageIndex,int pageSize,Expression<Func<<#=table.TableName#>Entity,bool>> expression,Expression<Func<<#=table.TableName#>Entity,TKey>> order)
+		{
+			return service.IQueryablePage(pageIndex,pageSize,expression,order).ToList();
+		}
+
+		public List<<#=table.TableName#>Entity> GetPageListDesc<TKey>(int pageIndex,int pageSize,Expression<Func<<#=table.TableName#>Entity,bool>> expression,Expression<Func<<#=table.TableName#>Entity,TKey>> order)
+		{
+			return service.IQueryablePageDesc(pageIndex,pageSize,expression,order).ToList();
+		}
+
 	    public <#=table.TableName#>Entity GetEntity(string keyValue)
         {
             return service.FindEntity(keyValue);
