@@ -18,6 +18,11 @@ namespace Step.Application
 	{
 	    private It_admin_userRepository service=new t_admin_userRepository();
 
+		public int GetCount(Expression<Func<t_admin_userEntity, bool>> expression)
+        {
+            return service.IQueryable(expression).Count();
+        }
+
 		public List<t_admin_userEntity> GetList()
         {
             return service.IQueryable().ToList();
@@ -86,6 +91,11 @@ namespace Step.Application
 	public partial class t_menuApp
 	{
 	    private It_menuRepository service=new t_menuRepository();
+
+		public int GetCount(Expression<Func<t_menuEntity, bool>> expression)
+        {
+            return service.IQueryable(expression).Count();
+        }
 
 		public List<t_menuEntity> GetList()
         {
@@ -156,6 +166,11 @@ namespace Step.Application
 	{
 	    private It_roleRepository service=new t_roleRepository();
 
+		public int GetCount(Expression<Func<t_roleEntity, bool>> expression)
+        {
+            return service.IQueryable(expression).Count();
+        }
+
 		public List<t_roleEntity> GetList()
         {
             return service.IQueryable().ToList();
@@ -224,6 +239,11 @@ namespace Step.Application
 	public partial class t_role_menuApp
 	{
 	    private It_role_menuRepository service=new t_role_menuRepository();
+
+		public int GetCount(Expression<Func<t_role_menuEntity, bool>> expression)
+        {
+            return service.IQueryable(expression).Count();
+        }
 
 		public List<t_role_menuEntity> GetList()
         {

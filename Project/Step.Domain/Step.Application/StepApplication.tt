@@ -32,6 +32,11 @@ namespace Step.Application
 	{
 	    private I<#=table.TableName#>Repository service=new <#=table.TableName#>Repository();
 
+		public int GetCount(Expression<Func<<#=table.TableName#>Entity, bool>> expression)
+        {
+            return service.IQueryable(expression).Count();
+        }
+
 		public List<<#=table.TableName#>Entity> GetList()
         {
             return service.IQueryable().ToList();
