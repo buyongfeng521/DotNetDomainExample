@@ -1,0 +1,278 @@
+﻿
+@{
+    ViewBag.Title = "MenuList";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/bootstrap-treegrid/jquery.treegrid.css" rel="stylesheet" />
+<script src="~/Content/bootstrap-treegrid/jquery.treegrid.min.js"></script>
+<script src="~/Content/bootstrap-treegrid/jquery.treegrid.bootstrap3.js"></script>
+
+
+<div class="breadcrumbs" id="breadcrumbs">
+    <script type="text/javascript">
+        try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+    </script>
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home home-icon"></i>
+            <a href="/Admin/Home/Index">主页</a>
+        </li>
+        <li>
+            <a href="#">系统设置</a>
+        </li>
+        <li class="active">菜单列表</li>
+    </ul>
+</div>
+<div class="page-content">
+    <div class="page-header">
+        <h1>
+            菜单列表
+        </h1>
+    </div>
+    @using (Html.BeginForm("", "", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label class="sr-only">keyword</label>
+            <input type="text" name="keywords" class="nav-search-input" value="@ViewBag.Keywords" placeholder="请输入菜单名称">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-xs btn-default">
+                <i class="icon-search nav-search-icon bigger-80"></i>
+                <span class="bigger-110 no-text-shadow">搜索</span>
+            </button>
+        </div>
+        <div class="form-group pull-right">
+            <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick='addMenu()'>
+                <span class="bigger-110 no-text-shadow">新增菜单</span>
+            </a>
+        </div>
+        <div style="border-bottom: 1px dotted #E2E2E2; margin-top: 5px;"></div>
+    }
+
+
+
+    <div class="space-4"></div>
+
+    <table class="table tree table-bordered">
+        <tr>
+            <th>序号</th>
+            <th>菜单名称</th>
+            <th>菜单值</th>
+            <th>菜单链接</th>
+            <th>菜单排序</th>
+            <th>菜单样式</th>
+            <th>Area</th>
+            <th>Controller</th>
+            <th>Action</th>
+            <th>是否为主菜单</th>
+            <th>操作</th>
+        </tr>
+        @{
+            int i = 0;
+            foreach (var item in @ViewBag.Menus)
+            {
+                i++;
+                <tr class="treegrid-@i">
+                    <td>@i</td>
+                    <td>@item.menu_name</td>
+                    <td>@item.menu_value</td>
+                    <td>@item.menu_url</td>
+                    <td>@item.menu_order</td>
+                    <td>@item.menu_icon</td>
+                    <td>@item.menu_area</td>
+                    <td>@item.menu_controller</td>
+                    <td>@item.menu_action</td>
+                    <td>是</td>
+                    <td>
+                        <a href="javascript:void(0);" onclick="editMenu('@item.menu_id',@item.parent_id,this)">编辑</a>
+                        &nbsp;
+                        <a href="javascript:void(0);" onclick="del('@item.menu_id')">删除</a>
+                    </td>
+                </tr>
+                if (@ViewBag.SubMenus is List<Step.Domain.Entity.t_menuEntity>)
+                { 
+                    
+                    var listSub = (@ViewBag.SubMenus as List<Step.Domain.Entity.t_menuEntity>).Where(m => m.parent_id == item.menu_id);
+                    foreach (var data in listSub)
+                    {
+                        <tr class="treegrid-parent-@i">
+                            <td></td>
+                            <td>@data.menu_name</td>
+                            <td>@data.menu_value</td>
+                            <td>@data.menu_url</td>
+                            <td>@data.menu_order</td>
+                            <td>@data.menu_icon</td>
+                            <td>@data.menu_area</td>
+                            <td>@data.menu_controller</td>
+                            <td>@data.menu_action</td>
+                            <td>否</td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="editMenu('@data.menu_id','@data.parent_id',this)">编辑</a>
+                                &nbsp;
+                                <a href="javascript:void(0);" onclick="del(@data.menu_id)">删除</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        }
+    </table>
+
+</div>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalMenu">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">菜单</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="frmMenu">
+                    @Html.Hidden("menu_id")
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">菜单名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_name" name="menu_name" placeholder="菜单名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">菜单值</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_value" name="menu_value" placeholder="菜单值">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">父菜单</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownList("parent_id", ViewBag.SelParentMenu as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">URL</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_url" name="menu_url" placeholder="URL">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">菜单排序</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="menu_order" name="menu_order" placeholder="菜单排序">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">ICON</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_icon" name="menu_icon" placeholder="ICON">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Area</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_area" name="menu_area" placeholder="Area">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Controller</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_controller" name="menu_controller" placeholder="Controller">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Action</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_action" name="menu_action" placeholder="Action">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Style</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="menu_style" name="menu_style" placeholder="Style">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="save()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- JS -->
+<script>
+    $(function(){
+        SetMenu("#settings_menu", 1);
+    });
+
+        function addMenu() {
+            $("#menu_id").val("");
+            $("#menu_name").val("");
+            $("#menu_value").val("");
+            $("#parent_id").val("0");
+            $("#menu_url").val("#");
+            $("#menu_order").val("0");
+            $("#menu_icon").val("");
+            $("#menu_area").val("");
+            $("#menu_controller").val("");
+            $("#menu_action").val("");
+            $("#menu_style").val("");
+
+            $("#modalMenu").modal("show");
+        }
+
+        function editMenu(id) {
+            if (id) {
+                $.get("/Admin/Settings/MenuModelGet", { "id": id }, function (data) {
+                    $("#menu_id").val(data.menu_id);
+                    $("#menu_name").val(data.menu_name);
+                    $("#menu_value").val(data.menu_value);
+                    $("#parent_id").val(data.parent_id);
+                    $("#menu_url").val(data.menu_url);
+                    $("#menu_order").val(data.menu_order);
+                    $("#menu_icon").val(data.menu_icon);
+                    $("#menu_area").val(data.menu_area);
+                    $("#menu_controller").val(data.menu_controller);
+                    $("#menu_action").val(data.menu_action);
+                    $("#menu_style").val(data.menu_style);
+                
+
+                    $("#modalMenu").modal("show");
+                });
+            }
+        }
+
+        function delMenu(id){
+            if(id){
+                if(confirm("确定删除？")){
+                    $.post("/Admin/Settings/MenuDelete",{"id":id},function(data){
+                        $.procAjaxData(data, function () {
+                            location.href = window.location.href;
+                        });
+                    });
+                }
+            }
+        }
+
+        function save() {
+            var url = "/Admin/Settings/MenuAdd";
+            $.post(url, $("#frmMenu").serialize(), function (data) {
+                $.procAjaxData(data, function () {
+                    location.href = window.location.href;
+                });
+            });
+        }
+</script>
+
+

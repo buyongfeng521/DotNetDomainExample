@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "RoleList";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@model List<Step.Domain.Entity.t_roleEntity>
+
+<div class="breadcrumbs" id="breadcrumbs">
+    <script type="text/javascript">
+        try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+    </script>
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home home-icon"></i>
+            <a href="/Admin/Home/Index">主页</a>
+        </li>
+        <li>
+            <a href="#">系统设置</a>
+        </li>
+        <li class="active">角色列表</li>
+    </ul>
+</div>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1>
+            角色管理
+        </h1>
+    </div>
+
+    @using (Html.BeginForm("RoleList", "Settings", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label class="sr-only">keyword</label>
+            <input type="text" name="keywords" class="nav-search-input" value="@ViewBag.Keywords" placeholder="角色名称">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-xs btn-default">
+                <i class="icon-search nav-search-icon bigger-80"></i>
+                <span class="bigger-110 no-text-shadow">搜索</span>
+            </button>
+        </div>
+        <div class="form-group pull-right">
+            <a class="btn btn-xs btn-success" href="javascript:void(0)" onclick="addRole()">
+                <i class="glyphicon glyphicon-plus align-top bigger-125"></i>
+                <span class="bigger-110 no-text-shadow">新增角色</span>
+            </a>
+        </div>
+    }
+
+
+    <div class="space-4"></div>
+
+    <table class="table table-hover table-striped table-bordered">
+        <tr>
+            <th>序号</th>
+            <th>角色名称</th>
+            <th>权限</th>
+            <th>操作</th>
+        </tr>
+        @{
+            int i = 0;
+            foreach (var item in Model)
+            {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@item.role_name</td>
+                    <td>
+                        <a href="javascript:void(0)" onclick="ShowRoleMenu('@item.role_id')">分配权限</a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" onclick="editRole('@item.role_id',this)">编辑</a>
+                    </td>
+                </tr>
+            }
+
+        }
+
+    </table>
+
+</div>
+
+
+
+
+
+
+
+<!-- Modal -->
+<!-- Role -->
+<div class="modal fade" id="modalRole">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">角色</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="frmRole">
+                    @Html.Hidden("role_id")
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">角色名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="role_name" name="role_name" placeholder="角色名称">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="save()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Menu_Role -->
+<div class="modal fade bs-example-modal-lg" id="divRoleMenu" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">分配权限</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.Hidden("hideRoleID")
+                                    <input type="checkbox" name="cbAll" id="cbAll" value="" onclick="CheckAll(this.checked)"> 全选
+                                </label>
+                            </div>
+                        </div>
+                        @{
+                            foreach (var item in (@ViewBag.ListMenu as List<Step.Domain.Entity.t_menuEntity>))
+                            {
+                                <div class="col-sm-3">
+                                    <p>@item.menu_name</p>
+                                    <table class="table table-bordered" id="tbl_@item.menu_id">
+                                        <tr>
+                                            <th>
+                                                @if (item.menu_name == "控制台")
+                                                {
+                                                    <input type="checkbox" name="cbSub" value="@item.menu_id" onclick="CheckSubAll(this.checked,this,'@item.menu_id')" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" name="cbSub" value="" onclick="CheckSubAll(this.checked,this,'@item.menu_id')" />
+                                                }
+                                            </th>
+                                            <th>菜单名称</th>
+                                        </tr>
+                                        @{
+                                                var listSubMenu = (ViewBag.ListSubMenu as List<Step.Domain.Entity.t_menuEntity>).Where(m => m.parent_id == item.menu_id);
+                                                foreach (var data in listSubMenu)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" name="cbSub" value="@data.menu_id" />
+                                                        </td>
+                                                        <td>@data.menu_name</td>
+                                                    </tr>
+                                                }
+                                        }
+                                    </table>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <a href="javascript:void(0);" class="btn btn-sm btn-primary" onclick="saveRoleMenu()">保存</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+<!-- JS -->
+<script>
+
+    $(function () {
+        SetMenu("#settings_role", 1);
+    });
+    function addRole() {
+        $("#role_id").val("");
+        $("#role_name").val("");
+        $("#modalRole").modal("show");
+    }
+
+    function editRole(id) {
+        if (id) {
+            $.get("/Admin/Settings/RoleModelGet", { "id": id }, function (data) {
+                $("#role_id").val(data.role_id);
+                $("#role_name").val(data.role_name);
+                $("#modalRole").modal("show");
+            });
+        }
+
+    }
+
+    function save() {
+        var url = "/Admin/Settings/RoleSave";
+        $.post(url, $("#frmRole").serialize(), function (data) {
+            $.procAjaxData(data, function () {
+                location.href = window.location.href;
+            });
+        });
+    }
+
+</script>
+
+
+
+<script>
+    //show Menus
+    function ShowRoleMenu(role_id) {
+        $("input[name='cbAll']").each(function () {
+            this.checked = false;
+        });
+
+        $("input[name='cbSub']").each(function () {
+            this.checked = false;
+
+        });
+
+        $("#hideRoleID").val(role_id);
+        var url = "/Admin/Settings/RoleMenusGet?role_id=" + role_id;
+
+        $("#divRoleMenu").modal('show');
+        $.get(url, function (data) {
+            $.each(data, function (index, itemData) {
+                $("input[name='cbSub']").each(function () {
+                    if ($(this).val() == itemData.menu_id) {
+                        this.checked = true;
+                    }
+                });
+
+            });
+        })
+    }
+
+    //分配权限
+    function saveRoleMenu() {
+        var ids = GetCheckedValue();
+        
+        var roleid = $("#hideRoleID").val();
+        var url = "/Admin/Settings/AssignPermissions";
+        //alert(ids);
+        console.log(ids);
+        console.log(roleid);
+        $.post(url, { "ids": ids, "role_id": roleid }, function (data) {
+            $.procAjaxData(data, function () {
+                $("#divRoleMenu").modal('hide');
+            })
+        })
+    }
+
+</script>
+
+

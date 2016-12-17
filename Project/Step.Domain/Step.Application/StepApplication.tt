@@ -1,0 +1,91 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core.dll" #>
+<#@ assembly name="System.Data.dll" #>
+<#@ assembly name="System.Data.DataSetExtensions.dll" #>
+<#@ assembly name="System.Xml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ include file="$(ProjectDir)DbHelper.ttinclude"  #>
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Step.Domain.Entity;
+using Step.Domain.IRepository;
+using Step.Repository;
+using System.Linq.Expressions;
+namespace Step.Application
+{	
+<#foreach(DbTable table in DbHelper.GetDbTables(config.ConnectionString,config.DbDatabase)){#>
+	/// <summary>
+	/// <#=table.TableName#>App
+	/// </summary>	
+	public partial class <#=table.TableName#>App
+	{
+	    private I<#=table.TableName#>Repository service=new <#=table.TableName#>Repository();
+
+		public List<<#=table.TableName#>Entity> GetList()
+        {
+            return service.IQueryable().ToList();
+        }
+
+		public List<<#=table.TableName#>Entity> GetList(Expression<Func<<#=table.TableName#>Entity, bool>> expression)
+        {
+            return service.IQueryable(expression).ToList();
+        }
+
+		public List<<#=table.TableName#>Entity> GetList<TKey>(Expression<Func<<#=table.TableName#>Entity, bool>> expression,Expression<Func<<#=table.TableName#>Entity, TKey>> order)
+		{
+			return service.IQueryable(expression).OrderBy(order).ToList();
+		}
+
+		public List<<#=table.TableName#>Entity> GetListByDesc<TKey>(Expression<Func<<#=table.TableName#>Entity, bool>> expression,Expression<Func<<#=table.TableName#>Entity, TKey>> order)
+		{
+			return service.IQueryable(expression).OrderByDescending(order).ToList();
+		}
+
+	    public <#=table.TableName#>Entity GetEntity(string keyValue)
+        {
+            return service.FindEntity(keyValue);
+        }
+
+		public <#=table.TableName#>Entity GetEntity(Expression<Func<<#=table.TableName#>Entity, bool>> expression)
+        {
+            return service.FindEntity(expression);
+        }
+
+        public void Delete(<#=table.TableName#>Entity entity)
+        {
+            service.Delete(entity);
+        }
+
+		public void Delete(Expression<Func<<#=table.TableName#>Entity, bool>> expression)
+        {
+            service.Delete(expression);
+        }
+
+
+		public void Insert(<#=table.TableName#>Entity entity)
+		{
+			service.Insert(entity);
+		}
+		public void Update(<#=table.TableName#>Entity entity)
+		{
+			service.Update(entity);
+		}
+
+
+    }
+<#}#>
+}
+
+
+

@@ -1,0 +1,36 @@
+﻿<ul class="nav nav-list">
+
+    @{
+        foreach (var item in (@ViewBag.listMenu as List<Step.Domain.Entity.t_menuEntity>))
+        {
+            <li id="@item.menu_value">
+                <a href="@item.menu_url" class="dropdown-toggle">
+                    <i class="@item.menu_icon"></i>
+                    <span class="menu-text"> @item.menu_name </span>
+                    @if (@item.menu_name != "控制台")
+                    {
+                        <b class="arrow icon-angle-down"></b>
+                    }
+                </a>
+                @{
+                    var listSubMenu = (ViewBag.ListSubMenu as List<Step.Domain.Entity.t_menuEntity>).Where(m => m.parent_id == item.menu_id);
+                    if (listSubMenu.Count() > 0)
+                    {
+                        <ul class="submenu">
+                            @foreach (var data in listSubMenu)
+                            {
+                                <li id="@data.menu_value">
+                                    <a href="@data.menu_url">
+                                        <i class="@data.menu_icon"></i>
+                                        @data.menu_name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+            </li>
+        }
+    }
+
+</ul>

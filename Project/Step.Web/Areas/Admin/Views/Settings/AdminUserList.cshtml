@@ -1,0 +1,170 @@
+﻿@{
+    ViewBag.Title = "AdminUserList";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@model List<Step.Domain.Entity.t_admin_userEntity>
+
+<div class="breadcrumbs" id="breadcrumbs">
+    <script type="text/javascript">
+        try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+    </script>
+    <ul class="breadcrumb">
+        <li>
+            <i class="icon-home home-icon"></i>
+            <a href="/Admin/Home/Index">主页</a>
+        </li>
+        <li>
+            <a href="#">系统设置</a>
+        </li>
+        <li class="active">管理员列表</li>
+    </ul>
+</div>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1>
+            管理员列表
+        </h1>
+    </div>
+
+    @using (Html.BeginForm("AdminUserList", "Settings", FormMethod.Get, new { @class = "form-inline" }))
+    {
+        <div class="form-group">
+            <label class="sr-only">keyword</label>
+            <input type="text" name="keywords" class="nav-search-input" value="@ViewBag.Keywords" placeholder="关键字">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-xs btn-default">
+                <i class="icon-search nav-search-icon bigger-80"></i>
+                <span class="bigger-110 no-text-shadow">搜索</span>
+            </button>
+        </div>
+        <div class="form-group pull-right">
+            <a class="btn btn-xs btn-success" href="javascript:void(0)" onclick="AdminUserAdd()">
+                <i class="glyphicon glyphicon-plus align-top bigger-125"></i>
+                <span class="bigger-110 no-text-shadow">新增用户</span>
+            </a>
+        </div>
+    }
+
+
+    <div class="space-4"></div>
+
+    <table class="table table-hover table-striped table-bordered">
+        <tr>
+            <th>序号</th>
+            <th>用户名</th>
+            @*<th>真实姓名</th>*@
+            <th>角色</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        @{
+            int i = 0;
+            foreach (var item in Model)
+            {
+                i++;
+                <tr>
+                    <td>@i</td>
+                    <td>@item.user_name</td>
+                    @*<td>@item.user_realname</td>*@
+                    <td>@Step.Helper.ContentHelper.GetRoleNameByID(item.role_id)</td>
+                    <td>@(((DateTime)item.create_time).ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                    <td>
+                        <a href="javascript:void(0)" onclick="AdminUserEdit('@item.user_id')">编辑</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="javascript:void(0)" onclick="AdminUserDelete('@item.user_id',this)">删除</a>
+                    </td>
+                </tr>
+            }
+
+        }
+
+    </table>
+
+</div>
+
+
+<!--Modal-->
+<div class="modal fade" id="modalAdd" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">管理员信息</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Hidden("hideID")
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" class="form-control" id="user_name" name="user_name" placeholder="用户名" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>角色</label>
+                    @Html.DropDownList("user_role", ViewBag.UserRole as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" class="form-control" id="user_psw" placeholder="密码" maxlength="30">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnSave">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+        SetMenu("#settings_admin", 1);
+
+
+        $("#btnSave").click(function () {
+            var uName = $("#user_name").val();
+            var uRole = $("#user_role").val();
+            var uPsw = $("#user_psw").val();
+            var uID = $("#hideID").val();
+            var url = "/Admin/Settings/AdminUserAdd";
+            var uData = { "user_name": uName, "user_psw": uPsw, "user_role": uRole };
+            if (uID) {
+                url = "/Settings/AdminUserEdit";
+                uData = { "user_name": uName, "user_psw": uPsw, "user_id": uID, "user_role": uRole };
+            }
+            if (uName && uPsw) {
+
+                $.post(url, uData, function (data) {
+                    $.procAjaxData(data, function () {
+                        location.href = window.location.href;
+                    });
+                });
+            }
+            else {
+                alert("请输入信息");
+            }
+        });
+    });
+
+    function AdminUserAdd() {
+        $("#user_name").val("");
+        $("#user_psw").val("");
+        $("#hideID").val("");
+        $("#modalAdd").modal("show");
+    };
+    function AdminUserEdit(id) {
+        var url = "/Admin/Settings/AdminUserGet?user_id=" + id;
+        $.get(url, function (data) {
+            console.log(data);
+            $("#user_name").val(data.user_name);
+            $("#user_psw").val("**********************");
+            $("#hideID").val(data.user_id);
+            $("#modalAdd").modal("show");
+        });
+    };
+</script>
+
+

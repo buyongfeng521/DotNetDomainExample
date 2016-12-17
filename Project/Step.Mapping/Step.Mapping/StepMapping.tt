@@ -1,0 +1,36 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core.dll" #>
+<#@ assembly name="System.Data.dll" #>
+<#@ assembly name="System.Data.DataSetExtensions.dll" #>
+<#@ assembly name="System.Xml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ include file="$(ProjectDir)DbHelper.ttinclude"  #>
+
+using Step.Domain.Entity;
+using System.Data.Entity.ModelConfiguration;
+namespace Step.Mapping
+{	
+<#foreach(DbTable table in DbHelper.GetDbTables(config.ConnectionString,config.DbDatabase)){#>
+	/// <summary>
+	/// <#=table.TableName#>
+	/// </summary>	
+	public class <#=table.TableName#>Map:EntityTypeConfiguration<<#=table.TableName#>Entity>
+	{
+	   public <#=table.TableName#>Map()
+	   {
+	      this.ToTable("<#=table.TableName#>");
+		  this.HasKey(t=>t.<#=DbHelper.GetPrimaryKey(DbHelper.GetDbColumns(config.ConnectionString, config.DbDatabase, table.TableName))#>);
+	   }
+    }
+<#}#>
+}
+
+
+

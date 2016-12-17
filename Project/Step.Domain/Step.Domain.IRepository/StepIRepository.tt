@@ -1,0 +1,42 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core.dll" #>
+<#@ assembly name="System.Data.dll" #>
+<#@ assembly name="System.Data.DataSetExtensions.dll" #>
+<#@ assembly name="System.Xml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ include file="$(ProjectDir)DbHelper.ttinclude"  #>
+
+<# 
+	var tableName=config.TableName.Replace("Sys_","")+"Repository";
+	var entity=config.TableName.Replace("Sys_","")+"Entity";
+ #>
+using Step.Data;
+using Step.Domain.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Step.Domain.IRepository
+{	
+<#foreach(DbTable table in DbHelper.GetDbTables(config.ConnectionString,config.DbDatabase)){#>
+	/// <summary>
+	/// I<#=table.TableName#>Repository
+	/// </summary>	
+	public interface I<#=table.TableName#>Repository:IRepositoryBase<<#=table.TableName#>Entity>
+	{
+		
+    }
+<#}#>
+}
+
+
+

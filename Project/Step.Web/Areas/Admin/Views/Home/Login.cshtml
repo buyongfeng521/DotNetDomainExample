@@ -1,0 +1,126 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>StepByStep后台管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- basic styles -->
+    <link href="~/Content/boot/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/ACE/css/font-awesome.css" rel="stylesheet" />
+    <!-- ace styles -->
+    <link href="~/Content/ACE/css/ace.min.css" rel="stylesheet" />
+    <link href="~/Content/ACE/css/ace-rtl.css" rel="stylesheet" />
+
+    <!--script-->
+    <script src="~/Content/js/jquery-2.1.4.min.js"></script>
+    <script src="~/Content/boot/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+
+    <script type="text/javascript">
+        (function (window) {
+            afterSubmit = function (data) {
+                console.log(data);
+                if (data.Status == "ok") {
+                    window.location.href = "/Admin/Home/Index";
+                }
+                else {
+                    Messenger().post({
+                        message: data.Msg,
+                        type: 'error',
+                        showCloseButtom: true
+                    });
+                    $("#UPassword").val("");
+                    $("#UName").focus();
+                }
+            };
+        })(window);
+        
+    </script>
+
+    <!--Messenger-->
+    <link href="~/Content/messenger/messenger.css" rel="stylesheet" />
+    <link href="~/Content/messenger/messenger-theme-future.css" rel="stylesheet" />
+    <script src="~/Scripts/messenger/messenger.min.js"></script>
+    <script src="~/Scripts/messenger/messenger-theme-future.js"></script>
+    <script>
+        $(function () {
+            Messenger.options = {
+                extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
+                theme: 'future'
+            }
+        })
+    </script>
+</head>
+<body class="login-layout">
+    <div class="main-container">
+        <div class="main-content">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="login-container">
+                        <div class="center">
+                            <h1>
+                                <i class="icon-leaf green"></i>
+                                <span class="red">StepByStep</span>
+                                <span class="white">后台管理</span>
+                            </h1>
+                            <h4 class="blue">&copy; STEP</h4>
+                        </div>
+                        <div class="space-6"></div>
+                        <div class="position-relative">
+                            <div id="login-box" class="login-box visible widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header blue lighter bigger">
+                                            <i class="icon-coffee green"></i>
+                                            请输入登录信息
+                                        </h4>
+                                        <div class="space-6"></div>
+                                        @using (Ajax.BeginForm("Login", "Home", FormMethod.Post, new AjaxOptions() { OnSuccess = "afterSubmit" }))
+                                        {
+                                            <form>
+                                                <fieldset>
+                                                    <label class="block clearfix">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="text" class="form-control" value="" name="UName" id="UName" placeholder="用户名" required />
+                                                            <i class="icon-user"></i>
+                                                        </span>
+                                                    </label>
+                                                    <label class="block clearfix">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="password" class="form-control" value="" name="UPassword" id="UPassword" placeholder="密码" required />
+                                                            <i class="icon-lock"></i>
+                                                        </span>
+                                                    </label>
+                                                    <div class="space"></div>
+                                                    <div class="clearfix">
+                                                        <label class="inline">
+                                                            <input type="checkbox" class="ace" name="cbRemberMe" />
+                                                            <span class="lbl"> 记住我</span>
+                                                        </label>
+                                                        <button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
+                                                            <i class="icon-key"></i>
+                                                            登录
+                                                        </button>
+                                                    </div>
+                                                    <div class="space-4"></div>
+                                                </fieldset>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
